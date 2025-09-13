@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum city {
+  Chandigarh
+  Mohali
+  Zirakpur
+  Panchkula
+  Other
+}
+enum propertyType {
+  Apartment
+  Villa
+  Plot
+  Office
+  Retail
+}
+enum bhk {
+  bhk1
+  bhk2
+  bhk3
+  bhk4
+  Studio
+}
+enum purpose {
+  Buy
+  Rent
+}
+enum timeline {
+  LT_3M     @map("less than 3 months")
+  B_3_6M  @map("between 3 to 6 months")
+  MT_6M     @map("more than 6 months")
+  Exploring
+}
+enum source {
+  Website
+  Referral
+  Walkin
+  Call
+  Other
+}
+enum status {
+  New
+  Qualified
+  Contacted
+  Visited
+  Negotiation
+  Converted
+  Dropped
+}
+
+model Buyer {
+  id String @id @default(uuid())
+  fullName String @db.VarChar(80)
+  email String?
+  phone String @db.VarChar(15)
+  city city 
+  propertyType propertyType
+  bhk bhk?
+  purpose purpose
+  budgetMin Int?
+  budgetMax Int?
+  timeline timeline
+  source source
+  status status @default(New)
+  notes String? @db.VarChar(1000)
+  tags String[]
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id])
+  updatedAt DateTime @updatedAt
+  histories BuyerHistory[]
+}
+
+model User {
+  id String @id @default(uuid())
+  fullName String @db.VarChar(80)
+  email String @unique
+  password String
+  buyers Buyer[]
+  changesMade BuyerHistory[] 
+}
+
+model BuyerHistory {
+  id String @id @default(uuid())
+  buyerId String
+  buyer Buyer @relation(fields: [buyerId], references: [id])
+  changedBy String
+  changedByUser User @relation(fields: [changedBy], references: [id])
+  changedAt DateTime @default(now())
+  diff Json
+}
