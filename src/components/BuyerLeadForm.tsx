@@ -16,10 +16,15 @@ interface BuyerLeadFormProps {
   apiUrl: string;
 }
 
+import { useSession } from "next-auth/react";
+import { User } from "next-auth";
+
 function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
   type BuyerLeadFormType = z.infer<typeof buyerLeadSchema>;
 
-  console.log(defaultData);
+  const { data: session } = useSession();
+  const user: User = session?.user as User;
+  // console.log(defaultData);
 
   const [tagsArray, setTagsArray] = useState<string[]>([]);
   const [tag, setTag] = useState<string>("");
@@ -52,6 +57,7 @@ function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
     }
   };
   const propertyType = form.watch("propertyType");
+  const minBudget = form.watch("budgetMin");
   return (
     <div className="flex justify-center items-center min-h-screen bg-white">
       <div className="w-full max-w-screen-lg p-8 m-4  space-y-8 bg-white rounded-lg shadow-md">
@@ -183,7 +189,8 @@ function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
                     {...field}
                     type="number"
                     placeholder="Minimum budget"
-                    value={Number(field.value)}
+                    value={field.value}
+                    onChange={e => field.onChange(Number(e.target.value))}
                   />
                   <FormMessage />
                 </FormItem>
@@ -200,7 +207,8 @@ function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
                     {...field}
                     type="number"
                     placeholder="Maximum budget"
-                    value={Number(field.value)}
+                    value={field.value}
+                    onChange={e => field.onChange(Number(e.target.value))}
                   />
                   <FormMessage />
                 </FormItem>
@@ -293,8 +301,9 @@ function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
             <Button
               type="submit"
               className="w-full"
+              disabled={defaultData?.ownerId != user?.id}
             >
-              button
+              Submit
             </Button>
           </form>
         </Form>

@@ -1,8 +1,26 @@
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
 export async function POST(request: Request) {
   try {
     const { fullName, email, phone, city, propertyType, bhk, purpose, budgetMin, budgetMax, timeline, source, notes, tags } = await request.json();
+
+    const session = await getServerSession(authOptions);
+
+    const user = session?.user;
+
+    if (!session || !session.user) {
+      return Response.json(
+        {
+          success: false,
+          message: "Not Authenticated",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
 
     const buyerLead = await prisma.buyer.create({
       data: {
@@ -19,7 +37,7 @@ export async function POST(request: Request) {
         source,
         notes,
         tags,
-        ownerId: "e4617870-7613-437e-beb5-5f0b93ff7864",
+        ownerId: user?.id as string,
       },
     });
 

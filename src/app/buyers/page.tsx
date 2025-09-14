@@ -163,7 +163,6 @@ function Page() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {!data.length && <h2 className="text-lg font-medium">No results found</h2>}
           {data.length != 0 &&
             data.map(row => (
               <TableRow key={row.id}>
@@ -195,6 +194,7 @@ function Page() {
             ))}
         </TableBody>
       </Table>
+      {!data.length && <h2 className="text-lg font-medium">No results found</h2>}
 
       <div className="flex justify-between items-center mt-4">
         <p>

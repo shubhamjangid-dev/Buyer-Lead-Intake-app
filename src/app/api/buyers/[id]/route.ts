@@ -1,12 +1,31 @@
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     const data = await request.json();
 
+    const session = await getServerSession(authOptions);
+
+    const user = session?.user;
+
+    if (!session || !session.user) {
+      return Response.json(
+        {
+          success: false,
+          message: "Not Authenticated",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
     const buyer = await prisma.buyer.findUnique({
       where: { id: params.id },
     });
+
     if (!buyer) {
       return Response.json(
         {
@@ -18,6 +37,19 @@ export async function POST(request: Request, { params }: { params: { id: string 
         }
       );
     }
+
+    if (buyer.ownerId != user?.id) {
+      return Response.json(
+        {
+          success: false,
+          message: "Not Authorised",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
     const updatedBuyerLead = await prisma.buyer.update({
       where: { id: params.id },
       data,
