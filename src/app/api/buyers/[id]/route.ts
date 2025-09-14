@@ -66,3 +66,43 @@ export async function POST(request: Request, { params }: { params: { id: string 
     );
   }
 }
+
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  try {
+    const buyer = await prisma.buyer.findUnique({
+      where: { id: params.id },
+    });
+    if (!buyer) {
+      return Response.json(
+        {
+          success: false,
+          message: "buylead not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    return Response.json(
+      {
+        success: false,
+        message: "Buylead fetched successfully",
+        data: buyer,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    console.error("Error occured while fetching buyer lead:", error);
+    return Response.json(
+      {
+        success: false,
+        message: "Failed to fetch buylead",
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}

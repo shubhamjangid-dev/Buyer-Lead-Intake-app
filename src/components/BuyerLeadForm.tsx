@@ -13,9 +13,10 @@ import { Textarea } from "./ui/textarea";
 
 interface BuyerLeadFormProps {
   defaultData: object | null;
+  apiUrl: string;
 }
 
-function BuyerLeadForm({ defaultData }: BuyerLeadFormProps) {
+function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
   type BuyerLeadFormType = z.infer<typeof buyerLeadSchema>;
 
   console.log(defaultData);
@@ -42,7 +43,7 @@ function BuyerLeadForm({ defaultData }: BuyerLeadFormProps) {
   };
   const onSubmit = async (data: BuyerLeadFormType) => {
     try {
-      const reaponse = await axios.post("/api/buyers/new", { ...data, timeline: timelineMap[data.timeline], tags: tagsArray });
+      const reaponse = await axios.post(apiUrl, { ...data, timeline: timelineMap[data.timeline], tags: tagsArray });
       console.log(Response);
     } catch (error) {
       console.log(error);
