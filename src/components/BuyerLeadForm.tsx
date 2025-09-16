@@ -48,7 +48,7 @@ function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
   };
   const onSubmit = async (data: BuyerLeadFormType) => {
     try {
-      const reaponse = await axios.post(apiUrl, { ...data, timeline: timelineMap[data.timeline], tags: tagsArray });
+      const reaponse = await axios.post(apiUrl, { ...data, tags: tagsArray });
       console.log(Response);
     } catch (error) {
       console.log(error);

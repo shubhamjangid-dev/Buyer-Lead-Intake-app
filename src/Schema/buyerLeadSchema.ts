@@ -4,7 +4,8 @@ export const Cities = ["Chandigarh", "Mohali", "Zirakpur", "Panchkula", "Other"]
 export const propertyTypes = ["Apartment", "Villa", "Plot", "Office", "Retail"] as const;
 export const bhk = ["bhk1", "bhk2", "bhk3", "bhk4", "Studio"] as const; // you defined safe names earlier
 export const purpose = ["Buy", "Rent"] as const;
-export const timelines = ["less than 3 months", "between 3 to 6 months", "more than 6 months", "Exploring"] as const;
+// export const timelines = ["less than 3 months", "between 3 to 6 months", "more than 6 months", "Exploring"] as const;
+export const timelines = ["LT_3M", "B_3_6M", "MT_6M", "Exploring"] as const;
 export const sources = ["Website", "Referral", "Walkin", "Call", "Other"] as const;
 
 export const buyerLeadSchema = z.object({

@@ -5,7 +5,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     const data = await request.json();
-
+    const { id } = await params;
     const session = await getServerSession(authOptions);
 
     const user = session?.user;
@@ -23,7 +23,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     const buyer = await prisma.buyer.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!buyer) {
@@ -51,18 +51,28 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     const updatedBuyerLead = await prisma.buyer.update({
-      where: { id: params.id },
+      where: { id },
       data,
     });
 
+    const diff: Record<string, { old: any; new: any }> = {};
+
+    for (const key in buyer) {
+      const parsedKey = key as keyof typeof buyer;
+
+      if (buyer[parsedKey] !== updatedBuyerLead[parsedKey]) {
+        diff[parsedKey] = {
+          old: buyer[parsedKey],
+          new: updatedBuyerLead[parsedKey],
+        };
+      }
+    }
+
     await prisma.buyerHistory.create({
       data: {
-        buyerId: params.id,
-        changedBy: "e4617870-7613-437e-beb5-5f0b93ff7864", // current user ID
-        diff: {
-          old: buyer,
-          new: updatedBuyerLead,
-        },
+        buyerId: id,
+        changedBy: user?.id as string,
+        diff,
       },
     });
     if (!updatedBuyerLead) {
@@ -101,8 +111,9 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
+    const { id } = await params;
     const buyer = await prisma.buyer.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     if (!buyer) {
       return Response.json(
@@ -116,11 +127,22 @@ export async function GET(request: Request, { params }: { params: { id: string }
       );
     }
 
+    const history = await prisma.buyerHistory.findMany({
+      where: {
+        buyerId: id,
+      },
+      orderBy: {
+        changedAt: "desc",
+      },
+      take: 5,
+    });
+
     return Response.json(
       {
         success: false,
         message: "Buylead fetched successfully",
         data: buyer,
+        history,
       },
       {
         status: 200,

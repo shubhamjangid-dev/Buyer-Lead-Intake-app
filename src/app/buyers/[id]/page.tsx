@@ -6,14 +6,17 @@ import axios, { AxiosError } from "axios";
 
 function Page() {
   const [defaultData, setDefaultData] = useState({});
+  const [history, setHistory] = useState([]);
   const prams = useParams<{ id: string }>();
   const id = prams.id;
   useEffect(() => {
     const getBuyerLead = async () => {
       try {
         const response = await axios.get(`/api/buyers/${id}`);
-        setDefaultData(response.data.data);
-        console.log(response.data);
+        const processedData = Object.fromEntries(Object.entries(response.data.data).filter(([key, value]) => value != null));
+        setDefaultData(processedData);
+        setHistory(response.data.history);
+        console.log(response.data, processedData);
       } catch (error) {
         console.log(error);
       }
@@ -27,6 +30,34 @@ function Page() {
         defaultData={defaultData}
         apiUrl={`/api/buyers/${id}`}
       />
+      {history.length != 0 && (
+        <div className="flex justify-center bg-white">
+          <div className="w-full max-w-screen-lg p-8 m-4  space-y-8 bg-white rounded-lg shadow-md">
+            <h1 className="text-4xl">History</h1>
+            {history.map((el, i) => (
+              <div
+                key={i}
+                className="p-4 border rounded mb-4"
+              >
+                <div className="text-sm text-gray-500">{el.changedAt}</div>
+                <div className="mt-2 space-y-1">
+                  {Object.entries(el.diff).map(([key, value]) => {
+                    if (key == "updatedAt") return null;
+                    return (
+                      <div
+                        key={key}
+                        className="text-sm"
+                      >
+                        <strong>{key}:</strong> <span className="text-red-500 line-through">{value.old ?? "—"}</span> → <span className="text-green-600">{value.new ?? "—"}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }
