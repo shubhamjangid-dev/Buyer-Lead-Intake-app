@@ -88,7 +88,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
     return Response.json(
       {
-        success: false,
+        success: true,
         message: "Buylead updated successfully",
         data: updatedBuyerLead,
       },
@@ -139,7 +139,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
     return Response.json(
       {
-        success: false,
+        success: true,
         message: "Buylead fetched successfully",
         data: buyer,
         history,

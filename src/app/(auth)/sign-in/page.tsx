@@ -36,17 +36,9 @@ function Page() {
 
     if (response?.error) {
       if (response.error === "CredentialsSignin") {
-        // toast({
-        //   title: "Login Failed",
-        //   description: "Incorrect Username or Password",
-        //   variant: "destructive",
-        // });
+        alert("Login Failed:Incorrect Username or Password");
       } else {
-        // toast({
-        //   title: "error",
-        //   description: response.error,
-        //   variant: "destructive",
-        // });
+        alert(`error:${response.error}`);
       }
     }
     setIsSubmitting(false);

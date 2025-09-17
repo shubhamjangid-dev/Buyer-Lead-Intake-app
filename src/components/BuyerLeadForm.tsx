@@ -18,6 +18,7 @@ interface BuyerLeadFormProps {
 
 import { useSession } from "next-auth/react";
 import { User } from "next-auth";
+import { useRouter } from "next/navigation";
 
 function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
   type BuyerLeadFormType = z.infer<typeof buyerLeadSchema>;
@@ -25,7 +26,7 @@ function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
   const { data: session } = useSession();
   const user: User = session?.user as User;
   // console.log(defaultData);
-
+  const router = useRouter();
   const [tagsArray, setTagsArray] = useState<string[]>([]);
   const [tag, setTag] = useState<string>("");
   const form = useForm<BuyerLeadFormType>({
@@ -48,10 +49,13 @@ function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
   };
   const onSubmit = async (data: BuyerLeadFormType) => {
     try {
-      const reaponse = await axios.post(apiUrl, { ...data, tags: tagsArray });
-      console.log(Response);
+      const response = await axios.post(apiUrl, { ...data, tags: tagsArray });
+      console.log(response);
+      alert(response?.data.message || "something went wrong");
+      router.replace("/buyers");
     } catch (error) {
       console.log(error);
+      alert(error || "something went wrong");
     } finally {
       form.reset({});
     }
@@ -301,7 +305,7 @@ function BuyerLeadForm({ defaultData, apiUrl }: BuyerLeadFormProps) {
             <Button
               type="submit"
               className="w-full"
-              disabled={defaultData?.ownerId != user?.id}
+              disabled={defaultData != null && defaultData?.ownerId != user?.id}
             >
               Submit
             </Button>

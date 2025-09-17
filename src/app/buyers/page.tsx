@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Cities, propertyTypes, timelines } from "@/Schema/buyerLeadSchema";
+import { Loader2 } from "lucide-react";
 
 const pageSize = 10;
 function Page() {
@@ -16,6 +17,7 @@ function Page() {
 
   const [data, setData] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   // URL state
   const page = Number(searchParams.get("page") ?? 1);
@@ -27,6 +29,7 @@ function Page() {
 
   useEffect(() => {
     const getAllBuyerLead = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get("/api/buyers", {
           params: { page, pageSize, search, city, propertyType, status, timeline },
@@ -37,6 +40,8 @@ function Page() {
         setTotal(response.data.totalCount);
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     };
     getAllBuyerLead();
@@ -194,7 +199,8 @@ function Page() {
             ))}
         </TableBody>
       </Table>
-      {!data.length && <h2 className="text-lg font-medium">No results found</h2>}
+      {!data.length && !isLoading && <h2 className="text-lg font-medium">No results found</h2>}
+      {isLoading && <Loader2 className="h-4 w-4 animate-spin justify-center" />}
 
       <div className="flex justify-between items-center mt-4">
         <p>

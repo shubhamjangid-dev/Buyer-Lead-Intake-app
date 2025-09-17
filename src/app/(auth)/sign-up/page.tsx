@@ -37,8 +37,10 @@ function Page() {
     try {
       const response = await axios.post("/api/sign-up", data);
       console.log(response);
+      alert(response.data.message);
     } catch (error) {
       console.log("ERROR :: sign up of user :: ");
+      alert(`error:${error}`);
     } finally {
       setIsSubmitting(false);
     }

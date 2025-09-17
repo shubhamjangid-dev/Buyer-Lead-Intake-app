@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { User } from "next-auth";
 import { Button } from "./ui/button";
+import { Home } from "lucide-react";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -12,6 +13,9 @@ const Navbar = () => {
   return (
     <nav className="p-4 md:p-6 shadow-md">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+        <Link href={"/"}>
+          <Home />
+        </Link>
         {session ? (
           <>
             <span className="mr-4">Welcome, {user?.fullName || user?.email}</span>

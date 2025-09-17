@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     }
     return Response.json(
       {
-        success: false,
+        success: true,
         message: "Buylead created successfully",
         data: buyerLead,
       },
