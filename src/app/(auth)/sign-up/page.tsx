@@ -37,7 +37,8 @@ function Page() {
     try {
       const response = await axios.post("/api/sign-up", data);
       console.log(response);
-      alert(response.data.message);
+      if (response.data.success) alert("user created successfully and sign-in");
+      router.replace("/sign-in");
     } catch (error) {
       console.log("ERROR :: sign up of user :: ");
       alert(`error:${error}`);
@@ -50,8 +51,8 @@ function Page() {
     <div className="flex justify-center items-center min-h-screen bg-gray-800">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">Join Review</h1>
-          <p className="mb-4">Sign up to start your anonymous adventure</p>
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">Join Buyer Lead</h1>
+          <p className="mb-4">Sign up to connect buyers</p>
         </div>
         <Form {...form}>
           <form
